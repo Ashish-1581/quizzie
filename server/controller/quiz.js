@@ -35,11 +35,7 @@ const getQuizById = async (req, res) => {
         res.status(200).send(quiz);
     } catch (error) {
         res.status(400).send(error);
-    }
-
-  
-
-    
+    }  
 }
 
 const deleteQuiz = async (req, res) => {
