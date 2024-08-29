@@ -1,0 +1,28 @@
+.button{
+    background:transparent;
+    border: none;
+ 
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    border-radius: 10px;
+    font-weight: bolder;
+
+    font-size: 1.2rem;
+    margin: 4px 2px;
+    cursor: pointer;
+
+}
+
+.stats{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 40px;
+    border-radius:5px ;
+    background-color: #FFFFFF;
+    height: 40px;
+    width: 200px;
+
+}

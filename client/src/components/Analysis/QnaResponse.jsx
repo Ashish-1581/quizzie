@@ -1,47 +1,48 @@
-import React from 'react'
-import{get_ResponseById} from '../../api/responseApi'
-import{get_QnaById} from '../../api/qnaApi'
+import React from "react";
+import { get_ResponseById } from "../../api/responseApi";
+import { get_QnaById } from "../../api/qnaApi";
+import { get_QuizById } from "../../api/quizApi";
+import { useState, useEffect } from "react";
+import styles from "./QnaResponse.module.css";
 
-import {useState,useEffect} from 'react'
-
-function QnaResponse({quizId}) {
+function QnaResponse({ quizId }) {
   const [response, setResponse] = useState(null);
   const [qna, setQna] = useState(null);
+  const [quiz, setQuiz] = useState(null);
 
   useEffect(() => {
     fetchResponse();
     fetchQna();
-}, [quizId])
- const fetchResponse = async () => {
-        const res = await get_ResponseById(quizId);
-        if(res.status===200){
-          console.log(res.data);
-            setResponse(res.data);
-
-     
-           
-            
-        }
+    fetchQuiz(quizId);
+  }, [quizId]);
+  const fetchResponse = async () => {
+    const res = await get_ResponseById(quizId);
+    if (res.status === 200) {
+      setResponse(res.data);
     }
+  };
 
-    const fetchQna = async () => {
-        const res = await get_QnaById(quizId);
-        if(res.data){
-          console.log(res.data.qnaArray);
-          setQna(res.data.qnaArray);
-           
-        }
+  const fetchQna = async () => {
+    const res = await get_QnaById(quizId);
+    if (res.data) {
+      setQna(res.data.qnaArray);
     }
+  };
+  const fetchQuiz = async (quizId) => {
+    const res = await get_QuizById(quizId);
+    if (res.data) {
+      setQuiz(res.data);
+    }
+  };
 
-if(!response || !qna){ 
-    return <div>Loading...</div>
-}
-     // Create an object to count the number of correct and incorrect answers for each question
+  if (!response || !qna || !quiz) {
+    return <div>Loading...</div>;
+  }
+
   const results = qna.map((item) => {
     let correctCount = 0;
     let incorrectCount = 0;
 
-    // Loop through each response and count correct and incorrect answers
     response.forEach((res) => {
       res.responseData.forEach((data) => {
         if (data.name === item.name) {
@@ -63,24 +64,61 @@ if(!response || !qna){
     };
   });
 
-  
   return (
     <>
-    
-    <div>
-    <h2>Q&A Results</h2>
-    {results.map((result, index) => (
-      <div key={index}>
-        <h3>{result.question}</h3>
-        <p>Total Attempts: {result.totalAttempts} times</p>
-        <p>Correct: {result.correctCount} times</p>
-        <p>Incorrect: {result.incorrectCount} times</p>
+      <div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <h2 style={{ color: "#5076FF", fontSize: "2.5rem" }}>
+            {quiz.title} Questions Analysis
+          </h2>
+          <div
+            style={{ color: "#FF5D01", fontWeight: "bolder", fontSize: "1rem" }}
+          >
+            <p>Created on : {quiz.createdAt}</p>
+            <p>Impressions : {quiz.impression}</p>
+          </div>
+        </div>
+        <div style={{  margin: "30px 0" }}>
+          {results.map((result, index) => (
+            <div key={index}>
+              <h3 style={{fontSize:"2rem"}}>Q.{index+1} {result.question}?</h3>
+              <div className={styles.container}>
+                <div className={styles.card}>
+                  <div style={{ fontSize: "2rem", fontWeight: "bolder" }}>
+                    {result.totalAttempts}
+                  </div>
+                  <div style={{ fontWeight: "bolder" }}>
+                    people Attempted the question
+                  </div>{" "}
+                </div>
+                <div className={styles.card}>
+                  <div style={{ fontSize: "2rem", fontWeight: "bolder" }}>
+                    {result.correctCount}
+                  </div>{" "}
+                  <div style={{ fontWeight: "bolder" }}>
+                    people Answered Correctly
+                  </div>
+                </div>
+                <div className={styles.card}>
+                  <div style={{ fontSize: "2rem", fontWeight: "bolder" }}>
+                    {result.incorrectCount}{" "}
+                  </div>{" "}
+                  <div style={{ fontWeight: "bolder" }}>people Answered
+                  Incorrectly</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    ))}
-  </div>
-
     </>
-  )
+  );
 }
 
-export default QnaResponse
+export default QnaResponse;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {get_Quizzes} from '../../api/quizApi';
+import { FaEye } from "react-icons/fa";
 
 function Display() {
     const token=localStorage.getItem("token");
@@ -18,17 +19,32 @@ function Display() {
 
   return (
     <>
-    <h1>Display</h1>
+  
     <div>
-    <h2>trending quiz</h2>
+    <h2 style={{marginTop:"50px",fontSize:"2rem"}}>Trending Quizs</h2>
+    <div style={{display:"flex",flexWrap:"wrap",gap:"50px",marginTop:"30px"}} >
     {quizzes.map((quiz) => (
-        <div key={quiz._id}>
+        <div style={{ display: "flex",
+            justifyContent: "center",
+            alignTtems: "center",
+            flexDirection: "column",
+            padding: "10px 10px",
+            borderRadius:"5px" ,
+            backgroundColor: "#FFFFFF",
+            height: "50px",
+            width: "170px",
+           
+        }}  key={quiz._id}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         
-            <h3>title:{quiz.title}</h3>
-            <h4>impression:{quiz.impression}</h4>
-            <p>createdAt:{quiz.createdAt}</p>
+        <h3>{quiz.title}</h3>
+        <p style={{color:"#FF5D01",fontWeight:"bolder",fontSize:"1rem"}}>{quiz.impression} {<FaEye  />}</p>
+        </div>
+        
+            <p style={{color:"#60B84B",fontWeight:"bolder",fontSize:"0.8rem"}}>Created on:{quiz.createdAt}</p>
         </div>
     ))}
+    </div>
 
     </div>
 

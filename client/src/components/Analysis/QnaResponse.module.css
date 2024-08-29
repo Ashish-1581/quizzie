@@ -1,0 +1,25 @@
+.container{
+    display:flex;
+    gap: 40px;
+    padding: 40px 0;
+   
+    border-bottom: 1px solid #37373e;
+}
+
+.card{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    flex-direction: column;
+  
+
+    
+    padding: 12px 10px;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    height: 60px;
+    width: 250px
+
+}
+

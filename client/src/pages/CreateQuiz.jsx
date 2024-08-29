@@ -11,6 +11,7 @@ function CreateQuiz() {
   const [quizId, setQuizId] = useState('');
   const[isPoll,setIsPoll]=useState(false);
   const[isQna,setIsQna]=useState(false);
+  
  
 
     const navigate=useNavigate();
