@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { get_PollById } from "../api/pollApi";
-import{get_QnaById} from "../api/qnaApi";
+import { get_QnaById } from "../api/qnaApi";
 import { create_Response } from "../api/responseApi";
-import{get_QuizById,update_Quiz} from "../api/quizApi";
-
-
+import { get_QuizById, update_Quiz } from "../api/quizApi";
+import PollSubmitted from "../components/Quiz/PollSubmitted";
+import QnaSubmitted from "../components/Quiz/QnaSubmitted";
+import styles from "./Quiz.module.css";
 
 function Quiz() {
   const { quizId } = useParams();
@@ -14,50 +15,36 @@ function Quiz() {
   const [items, setItems] = useState([]);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
   const [selectedItem, setSelectedItem] = useState(null);
-  
+  const [clickedIndex, serClickedIndex] = useState(null);
+
   const [pollData, setPollData] = useState([]);
   const [qnaData, setQnaData] = useState([]);
-  const[correct,setCorrect]=useState(0);
-  const[pollSubmit,setPollSubmit]=useState(false);
-  const[qnaSubmit,setQnaSubmit]=useState(false);
+  const [correct, setCorrect] = useState(0);
+  const [pollSubmit, setPollSubmit] = useState(false);
+  const [qnaSubmit, setQnaSubmit] = useState(false);
   const [timeLeft, setTimeLeft] = useState(null);
-
-
-
- 
-
-
 
   useEffect(() => {
     const fetchAndUpdateViews = async () => {
-    
       try {
-        const currentViews = await get_QuizById( quizId );
-      
-        
+        const currentViews = await get_QuizById(quizId);
+        console.log(currentViews);
+
+        if(currentViews.data._id == quizId){ {
+
         const newViews = currentViews.data.impression + 1;
-       
-       const response= await update_Quiz({ quizId, impression: newViews });
-     
-     
-        
+
+        const response = await update_Quiz({ quizId, impression: newViews });
+        }}
       } catch (error) {
-        console.error('Error updating views:', error);
+        console.error("Error updating views:", error);
       }
-    }
-    
+    };
 
     fetchAndUpdateViews();
-  },[quizId]);
- 
-
-
- 
-
-
+  }, []);
 
   const fetchQuiz = async () => {
- 
     const response = await get_QuizById(quizId);
 
     if (response.status === 200) {
@@ -67,15 +54,11 @@ function Quiz() {
         const responsePoll = await get_PollById(quizId);
         if (responsePoll.status === 200) {
           setItems(responsePoll.data.pollArray);
-
-         
         }
       } else if (response.data.type === "qna") {
         const responseQna = await get_QnaById(quizId);
         if (responseQna.status === 200) {
           setItems(responseQna.data.qnaArray);
-
-         
         }
       }
     }
@@ -92,7 +75,7 @@ function Quiz() {
   }, [items, selectedItemIndex]);
 
   useEffect(() => {
-    if (selectedItem && selectedItem.timer !== 'off') {
+    if (selectedItem && selectedItem.timer !== "off") {
       setTimeLeft(parseInt(selectedItem.timer, 10));
     } else {
       setTimeLeft(null);
@@ -104,150 +87,208 @@ function Quiz() {
 
     if (timeLeft > 0) {
       const timerId = setTimeout(() => {
-      
         setTimeLeft(timeLeft - 1);
       }, 1000);
 
-      return () => clearTimeout(timerId); // Cleanup function to clear the timeout
+      return () => clearTimeout(timerId);
     }
 
     if (timeLeft === 0) {
-      handelNext(); // Automatically move to the next item when time runs out
+      handelNext();
 
       if (selectedItemIndex === items.length - 1) {
-        handelSubmit(); // Submit the quiz when time runs out on the last item
+        handelSubmit();
 
-        setTimeLeft(null); // Stop the timer
+        setTimeLeft(null);
 
         return;
-
       }
-      
     }
   }, [timeLeft]);
 
-  
-
-  
-
-
-
-
   const handelNext = () => {
     if (selectedItemIndex < items.length - 1) {
-
-      setSelectedItemIndex(prevIndex => prevIndex + 1);
-      
+      setSelectedItemIndex((prevIndex) => prevIndex + 1);
     }
   };
   const handelClick = (index) => {
-  
+    serClickedIndex(index);
     if (quiz.type === "poll") {
-     
-      setPollData((prev) => [...prev, { name: items[selectedItemIndex].name, answer: index }]);
-
-
+      setPollData((prev) => [
+        ...prev,
+        { name: items[selectedItemIndex].name, answer: index },
+      ]);
     } else if (quiz.type === "qna") {
-   
       if (index === items[selectedItemIndex].answerIndex) {
-        setCorrect((prev)=>prev+1);
+        setCorrect((prev) => prev + 1);
         console.log("correct");
-        setQnaData((prev) => [...prev, {name: items[selectedItemIndex].name, answer: 1 }]);
-      }
-      else {
+        setQnaData((prev) => [
+          ...prev,
+          { name: items[selectedItemIndex].name, answer: 1 },
+        ]);
+      } else {
         console.log("incorrect");
-        setQnaData((prev) => [...prev, {name: items[selectedItemIndex].name, answer: 0 }]);
+        setQnaData((prev) => [
+          ...prev,
+          { name: items[selectedItemIndex].name, answer: 0 },
+        ]);
       }
-      
     }
   };
 
-  const handelSubmit = async() => {
-    if(quiz.type==="poll"){
-
-      if(pollData.length!==0){
-       
-        const res=await create_Response(quizId,pollData);
-        if(res.status===200){
+  const handelSubmit = async () => {
+    if (quiz.type === "poll") {
+      if (pollData.length !== 0) {
+        const res = await create_Response(quizId, pollData);
+        if (res.status === 200) {
           console.log("Poll Submitted");
           setTimeLeft(null);
         }
       }
-      
-      setPollSubmit(true);
-      
-    }
-    else if(quiz.type==="qna" ){
-      if(qnaData.length!==0){
 
-    const res=await create_Response(quizId,qnaData);
-    if(res.status===200){
-    console.log("Qna Submitted");
-    setTimeLeft(null);
+      setPollSubmit(true);
+    } else if (quiz.type === "qna") {
+      if (qnaData.length !== 0) {
+        const res = await create_Response(quizId, qnaData);
+        if (res.status === 200) {
+          console.log("Qna Submitted");
+          setTimeLeft(null);
+        }
       }
-    }
-    setQnaSubmit(true);
+      setQnaSubmit(true);
     }
   };
 
-
- 
-
-
   return (
     <>
-    
-      <h1>quiz {quiz.type}</h1>
-      {!pollSubmit && !qnaSubmit && selectedItem && (
-        <div>
-        <h1>{selectedItem.question}</h1>
-        {timeLeft !== null && <h3>Time Left: {timeLeft} seconds</h3>}
-        {selectedItem.inputs.map((input, index) => (
-          <div key={index}>
-            {selectedItem.type === "text" && (
-              // Display as text input
-              <button onClick={() => handelClick(index)}>{input.text}</button>
-            )}
-      
-            {selectedItem.type === "imageUrl" && (
-              // Display as an image if the type is 'imageUrl'
+      <div
+        style={{
+          background: "#041325",
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{
+            background: "#FFFFFF",
+            borderRadius: "20px",
+            padding: "30px",
+            height: "75%",
+            width: "80%",
+            boxShadow: "0px 0px 20px 0px rgba(0,0,0,0.3)",
+            textAlign: "center",
+            overflow: "auto",
+          }}
+        >
+          {!pollSubmit && !qnaSubmit && selectedItem && (
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <h2>
+                  0{selectedItemIndex + 1}/0{items.length}
+                </h2>
+                {timeLeft !== null && (
+                  <h2 style={{ color: "red" }}>00:{timeLeft}s</h2>
+                )}
+              </div>
               <div >
-                <img src={input.imageUrl} alt={`Input ${index + 1}`} style={{ width: "200px", height: "auto" }} />
-                <button onClick={() => handelClick(index)}>Select Image</button>
+              <h1 >{selectedItem.question}</h1>
               </div>
-            )}
-      
-            {selectedItem.type === "both" && (
-              // Display both text and image if the type is 'both'
-              <div>
-                <p>{input.text}</p>
-                <img src={input.imageUrl} alt={`Input ${index + 1}`} style={{ width: "200px", height: "auto" }} />
-                <button onClick={() => handelClick(index)}>Select Both</button>
+              <div className={styles.options}>
+                {selectedItem.inputs.map((input, index) => (
+                  <div className={styles.option} key={index}>
+                    {selectedItem.type === "text" && (
+                      <div
+                        style={{
+                          border: `${
+                            clickedIndex == index ? "2px solid blue" : "none"
+                          }`,
+                          fontWeight: "bold",
+                          fontSize: "20px",
+                          height:"100%",
+                          width:"100%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                        onClick={() => handelClick(index)}
+                      >
+                        {input.text}
+                      </div>
+                    )}
+
+                    {selectedItem.type === "imageUrl" && (
+                      <div
+                        style={{
+                          border: `${
+                            clickedIndex == index ? "2px solid blue" : "none"
+                          }`,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          height:"100%",
+                          width:"100%"
+                        }}
+                        onClick={() => handelClick(index)}
+                      >
+                        <img
+                          src={input.imageUrl}
+                          alt={`Input ${index + 1}`}
+                          style={{ width: "60%", height: "100%" }}
+                        />
+                      </div>
+                    )}
+
+                    {selectedItem.type === "both" && (
+                      <div
+                        style={{
+                          border: `${
+                            clickedIndex == index ? "2px solid blue" : "none"
+                          }`,
+                          display: "flex",
+                      
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          width:"100%",
+                          height:"100%",
+                          padding:"10px",
+                          textAlign:"center"
+                        }}
+                        onClick={() => handelClick(index)}
+                      >
+                        <p style={{width:"40%"}}>{input.text}</p>
+                        <img
+                          src={input.imageUrl}
+                          alt={`Input ${index + 1}`}
+                          style={{ width: "60%", height: "100%" }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
-        ))}
-      
-        {selectedItemIndex < items.length - 1 ? (
-          <button onClick={() => handelNext()}>Next</button>
-        ) : (
-          <button onClick={() => handelSubmit()}>Submit</button>
-        )}
-      </div>
-      )}
-      {pollSubmit && (
-        <div>
-          congo poll submitted
+
+              {selectedItemIndex < items.length - 1 ? (
+                <button className={styles.button} onClick={() => handelNext()}>
+                  Next
+                </button>
+              ) : (
+                <button
+                  className={styles.button}
+                  onClick={() => handelSubmit()}
+                >
+                  Submit
+                </button>
+              )}
+            </div>
+          )}
+          {pollSubmit && <PollSubmitted />}
+          {qnaSubmit && <QnaSubmitted correct={correct} total={items.length} />}
         </div>
-      )} 
-      {qnaSubmit && (
-        <div>
-          <h1>congo qna submitted</h1>
-          <h1>score:0{correct}/0{items.length}</h1>
-        </div>)}
+      </div>
     </>
   );
 }
 
 export default Quiz;
-
