@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { get_QnaById } from "../api/qnaApi";
 import { update_Qna } from "../api/qnaApi";
 import { useNavigate } from "react-router-dom";
-
+import { Audio } from 'react-loader-spinner'
 import { toast } from 'react-toastify';
 
 function EditQna() {
@@ -113,7 +113,16 @@ function EditQna() {
   };
 
   if (!items) {
-    return <div>Loading...</div>;
+    return <div style={{display:"flex",justifyContent:"center"}}> <Audio
+    height="80"
+    width="80"
+    radius="9"
+    color="green"
+    ariaLabel="loading"
+    wrapperStyle
+    wrapperClass
+  />;
+  </div>
   }
 
   const selectedItem = items[selectedItemIndex];

@@ -4,6 +4,7 @@ import { get_QnaById } from "../../api/qnaApi";
 import { get_QuizById } from "../../api/quizApi";
 import { useState, useEffect } from "react";
 import styles from "./QnaResponse.module.css";
+import { Audio } from 'react-loader-spinner'
 
 function QnaResponse({ quizId }) {
   const [response, setResponse] = useState(null);
@@ -36,7 +37,16 @@ function QnaResponse({ quizId }) {
   };
 
   if (!response || !qna || !quiz) {
-    return <div>Loading...</div>;
+    return <div style={{display:"flex",justifyContent:"center"}}> <Audio
+    height="80"
+    width="80"
+    radius="9"
+    color="green"
+    ariaLabel="loading"
+    wrapperStyle
+    wrapperClass
+  />;
+  </div>
   }
 
   const results = qna.map((item) => {

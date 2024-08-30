@@ -1,7 +1,7 @@
 import React from "react";
 import { get_ResponseById } from "../../api/responseApi";
 import { get_QuizById } from "../../api/quizApi";
-
+import { Audio } from 'react-loader-spinner'
 import { useState, useEffect } from "react";
 import { get_PollById } from "../../api/pollApi";
 
@@ -37,7 +37,16 @@ function PollResponse({ quizId }) {
   };
 
   if (!response || !poll || !quiz) {
-    return <div>Loading...</div>;
+    return  <div style={{display:"flex",justifyContent:"center"}}> <Audio
+    height="80"
+    width="80"
+    radius="9"
+    color="green"
+    ariaLabel="loading"
+    wrapperStyle
+    wrapperClass
+  />;
+  </div>
   }
 
   const resultCounts = poll.map((item) => ({

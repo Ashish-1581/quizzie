@@ -4,6 +4,8 @@ import { get_PollById } from "../api/pollApi";
 import { update_Poll } from "../api/pollApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Audio } from 'react-loader-spinner'
+
 
 function EditPoll() {
   const { quizId } = useParams();
@@ -100,7 +102,19 @@ function EditPoll() {
       }
     }
   };
-  if (!items) return;
+
+  if (!items) {
+    return <div style={{display:"flex",justifyContent:"center"}}> <Audio
+    height="80"
+    width="80"
+    radius="9"
+    color="green"
+    ariaLabel="loading"
+    wrapperStyle
+    wrapperClass
+  />;
+  </div>
+  }
   const selectedItem = items[selectedItemIndex];
 
   return (
