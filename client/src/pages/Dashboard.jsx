@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { get_Polls } from "../api/pollApi";
 import { get_Qnas } from "../api/qnaApi";
 
+
 import styles from "./Dashboard.module.css";
 
 function Dashboard() {
@@ -105,7 +106,7 @@ function Dashboard() {
             </button>
             <button
               className={styles.button}
-              onClick={() => navigate("/create_quiz")}
+              onClick={() => navigate(`/create_quiz/${userId}`)}
             >
               Create Quiz
             </button>

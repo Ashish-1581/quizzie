@@ -21,12 +21,12 @@ function App() {
 <BrowserRouter>
 <Routes>
 <Route path="/" element={<Auth/>} />
-<Route path="/create_quiz" element={<CreateQuiz />} />
-<Route path="/share_quiz/:quizId" element={<ShareQuiz />} />
+<Route path="/create_quiz/:userId" element={<CreateQuiz />} />
+<Route path="/share_quiz/:userId/:quizId" element={<ShareQuiz />} />
 <Route path="/quiz/:quizId" element={<Quiz />} />
 <Route path="/dashboard/:userId" element={<Dashboard />} />
-<Route path="/edit_poll/:quizId" element={<EditPoll />} />
-<Route path="/edit_qna/:quizId" element={<EditQna />} />
+<Route path="/edit_poll/:userId/:quizId" element={<EditPoll />} />
+<Route path="/edit_qna/:userId/:quizId" element={<EditQna />} />
 
 </Routes>
 </BrowserRouter>

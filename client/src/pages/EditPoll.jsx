@@ -3,8 +3,11 @@ import { useParams } from "react-router-dom";
 import { get_PollById } from "../api/pollApi";
 import { update_Poll } from "../api/pollApi";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 function EditPoll() {
   const { quizId } = useParams();
+ const { userId } = useParams();
   const [items, setItems] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
@@ -69,7 +72,7 @@ function EditPoll() {
 
     if (!allInputsFilled) {
       newValidationMessages.input =
-        "Please fill in all input fields for every item.";
+        "Please fill in all option fields for every question.";
     }
 
     setValidationMessages(newValidationMessages);
@@ -80,16 +83,20 @@ function EditPoll() {
 
       if (response.status === 201) {
         console.log("Poll updated successfully!");
-        navigate(`/share_quiz/${quizId}`);
+        navigate(`/share_quiz/${userId}/${quizId}`);
       } else {
-        console.log("Failed to create poll", response.error);
+        toast.error("Failed to update poll");
+        
       }
     } else {
       if (newValidationMessages.question) {
-        console.log(newValidationMessages.question);
+        toast.error(newValidationMessages.question);
+        
+       
       }
       if (newValidationMessages.input) {
-        console.log(newValidationMessages.input);
+        toast.error(newValidationMessages.input);
+        
       }
     }
   };
@@ -98,158 +105,209 @@ function EditPoll() {
 
   return (
     <>
-      <h1>EditPoll</h1>
-      {items && (
-        <div>
-          <div className="items-container">
-            <div className="items-list">
-              {items.map((item, index) => (
-                <div key={index}>
-                  <button
-                    onClick={() => handleItemClick(index)}
-                    className={`item-button ${
-                      index === selectedItemIndex ? "selected" : ""
-                    }`}
-                  >
-                    {item.name}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {selectedItem && (
+      <div
+        style={{
+          height: "100vh",
+          width: "100vw",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "rgba(0, 0, 0, 0.5)",
+        }}
+      >
+        <div
+          style={{
+            background: "white",
+            padding: "50px",
+            height: "500px",
+            width: "600px",
+            borderRadius: "10px",
+            position: "relative",
+          }}
+        >
+          {items && (
             <div>
-              <h3>Editing {selectedItem.name}</h3>
-
-              <div>
-                <label>
-                  Question:
-                  <input
-                    type="text"
-                    value={selectedItem.question}
-                    onChange={(e) =>
-                      handleQuestionChange(selectedItemIndex, e.target.value)
-                    }
-                    placeholder="Enter the question"
-                  />
-                </label>
+              <div className="items-container">
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "20px" }}
+                >
+                  <div className="items-list">
+                    {items.map((item, index) => (
+                      <div key={index}>
+                        <button
+                          onClick={() => handleItemClick(index)}
+                          className={`item-button ${
+                            index === selectedItemIndex ? "selected" : ""
+                          }`}
+                        >
+                          {index + 1}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              {selectedItem.inputs.map((input, inputIndex) => (
-                <div key={inputIndex}>
-                  {selectedItem.type === "text" && (
+              {selectedItem && (
+                <div>
+                  <div>
                     <input
                       type="text"
-                      value={input.text}
+                      value={selectedItem.question}
                       onChange={(e) =>
-                        handleInputChange(
-                          selectedItemIndex,
-                          inputIndex,
-                          "text",
-                          e.target.value
-                        )
+                        handleQuestionChange(selectedItemIndex, e.target.value)
                       }
-                      placeholder={`Input ${inputIndex + 1}`}
+                      placeholder="Poll question"
+                      className="question-input"
                     />
-                  )}
+                  </div>
 
-                  {selectedItem.type === "imageUrl" && (
-                    <input
-                      type="text"
-                      value={input.imageUrl}
-                      onChange={(e) =>
-                        handleInputChange(
-                          selectedItemIndex,
-                          inputIndex,
-                          "imageUrl",
-                          e.target.value
-                        )
-                      }
-                      placeholder={`Image URL ${inputIndex + 1}`}
-                    />
-                  )}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {selectedItem.inputs.map((input, inputIndex) => (
+                      <div  style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                      }} key={inputIndex}>
+                        {selectedItem.type === "text" && (
+                          <input
+                            type="text"
+                            value={input.text}
+                            onChange={(e) =>
+                              handleInputChange(
+                                selectedItemIndex,
+                                inputIndex,
+                                "text",
+                                e.target.value
+                              )
+                            }
+                            placeholder={`Text `}
+                            className={`option-input `}
+                          />
+                        )}
 
-                  {selectedItem.type === "both" && (
-                    <div>
-                      <input
-                        type="text"
-                        value={input.text}
-                        onChange={(e) =>
-                          handleInputChange(
-                            selectedItemIndex,
-                            inputIndex,
-                            "text",
-                            e.target.value
-                          )
+                        {selectedItem.type === "imageUrl" && (
+                          <input
+                            type="text"
+                            value={input.imageUrl}
+                            onChange={(e) =>
+                              handleInputChange(
+                                selectedItemIndex,
+                                inputIndex,
+                                "imageUrl",
+                                e.target.value
+                              )
+                            }
+                            placeholder={`Image URL `}
+                            className={`option-input`}
+                          />
+                        )}
+
+                        {selectedItem.type === "both" && (
+                          <div  style={{
+                            display: "flex",
+                            justifyContent: "space-around",
+                          }}>
+                            <input
+                              type="text"
+                              value={input.text}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  selectedItemIndex,
+                                  inputIndex,
+                                  "text",
+                                  e.target.value
+                                )
+                              }
+                              placeholder={`Text `}
+                              className={`option-input  `}
+                            />
+                            <input
+                              type="text"
+                              value={input.imageUrl}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  selectedItemIndex,
+                                  inputIndex,
+                                  "imageUrl",
+                                  e.target.value
+                                )
+                              }
+                              placeholder={`Image URL `}
+                              className={`option-input `}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Timer Options */}
+                  <div className="timer">
+                    <h4>Timer</h4>
+                    <div className="timer-options">
+                      <button
+                        className={`timer-button ${
+                          selectedItem.timer === "off" ? "selected" : ""
+                        }`}
+                        onClick={() =>
+                          handleTimerChange(selectedItemIndex, "off")
                         }
-                        placeholder={`Text ${inputIndex + 1}`}
-                      />
-                      <input
-                        type="text"
-                        value={input.imageUrl}
-                        onChange={(e) =>
-                          handleInputChange(
-                            selectedItemIndex,
-                            inputIndex,
-                            "imageUrl",
-                            e.target.value
-                          )
+                      >
+                        Off
+                      </button>
+                      <button
+                        className={`timer-button ${
+                          selectedItem.timer === "5sec" ? "selected" : ""
+                        }`}
+                        onClick={() =>
+                          handleTimerChange(selectedItemIndex, "5sec")
                         }
-                        placeholder={`Image URL ${inputIndex + 1}`}
-                      />
+                      >
+                        5 seconds
+                      </button>
+                      <button
+                        className={`timer-button ${
+                          selectedItem.timer === "10sec" ? "selected" : ""
+                        }`}
+                        onClick={() =>
+                          handleTimerChange(selectedItemIndex, "10sec")
+                        }
+                      >
+                        10 seconds
+                      </button>
                     </div>
-                  )}
+                  </div>
                 </div>
-              ))}
+              )}
 
-              {/* Timer Options */}
-              <div>
-                <h4>Set Timer</h4>
-                <div className="timer-options">
-                  <button
-                    className={`timer-button ${
-                      selectedItem.timer === "off" ? "selected" : ""
-                    }`}
-                    onClick={() => handleTimerChange(selectedItemIndex, "off")}
-                  >
-                    Off
-                  </button>
-                  <button
-                    className={`timer-button ${
-                      selectedItem.timer === "5sec" ? "selected" : ""
-                    }`}
-                    onClick={() => handleTimerChange(selectedItemIndex, "5sec")}
-                  >
-                    5 seconds
-                  </button>
-                  <button
-                    className={`timer-button ${
-                      selectedItem.timer === "10sec" ? "selected" : ""
-                    }`}
-                    onClick={() =>
-                      handleTimerChange(selectedItemIndex, "10sec")
-                    }
-                  >
-                    10 seconds
-                  </button>
-                </div>
-              </div>
+           
+
+              <div className="lower-button">
+              <button
+                className="button"
+                onClick={() => navigate(`/dashboard/${userId}`)}
+              >
+                Cancel
+              </button>
+              <button
+                className="button"
+                style={{ color: "white", background: "#60B84B" }}
+                onClick={updatePoll}
+              >
+                Update Quiz
+              </button>
+            </div>
             </div>
           )}
-
-          {/* Validation messages */}
-          {validationMessages.question && (
-            <p style={{ color: "red" }}>{validationMessages.question}</p>
-          )}
-          {validationMessages.input && (
-            <p style={{ color: "red" }}>{validationMessages.input}</p>
-          )}
-
-          {/* Create Quiz Button */}
-          <button onClick={updatePoll}>Update Poll</button>
         </div>
-      )}
+      </div>
     </>
   );
 }

@@ -3,18 +3,24 @@ import "./CreateQnA.css";
 import { create_Qna } from "../../api/qnaApi";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import { RiDeleteBin6Fill } from "react-icons/ri";
 
 const CreateQnA = ({ quizId }) => {
   const navigate = useNavigate();
-  const token=localStorage.getItem('token');
-
+  const token = localStorage.getItem("token");
+  const userId = useParams().userId;
 
   const [items, setItems] = useState([
     {
       name: "Item 1",
       question: "", // New property for question
       type: "text",
-      inputs: [{ text: "", imageUrl: "" }, { text: "", imageUrl: "" }],
+      inputs: [
+        { text: "", imageUrl: "" },
+        { text: "", imageUrl: "" },
+      ],
       answerIndex: null,
       timer: "off",
     },
@@ -70,21 +76,19 @@ const CreateQnA = ({ quizId }) => {
       name: `Item ${items.length + 1}`,
       question: "",
       type: "text",
-      inputs: [{ text: "", imageUrl: "" }, { text: "", imageUrl: "" }],
+      inputs: [
+        { text: "", imageUrl: "" },
+        { text: "", imageUrl: "" },
+      ],
       answerIndex: null,
       timer: "off",
     };
     setItems([...items, newItem]);
   };
   const deleteItem = (index) => {
-
     const newItems = [...items];
     newItems.splice(index, 1);
     setItems(newItems);
-
-    
-    
-  
   };
 
   const handleAnswerSelect = (index, inputIndex) => {
@@ -125,11 +129,12 @@ const CreateQnA = ({ quizId }) => {
 
     if (!allInputsFilled) {
       newValidationMessages.input =
-        "Please fill in all input fields for every item.";
+        "Please fill in all option fields for every item.";
     }
 
     if (!allAnswersSelected) {
-      newValidationMessages.answer = "Please select an answer for each item.";
+      newValidationMessages.answer =
+        "Please select an answer for each question.";
     }
 
     setValidationMessages(newValidationMessages);
@@ -138,23 +143,23 @@ const CreateQnA = ({ quizId }) => {
     if (allQuestionsFilled && allInputsFilled && allAnswersSelected) {
       console.log(items);
 
-      const response = await create_Qna(items, quizId,token);
+      const response = await create_Qna(items, quizId, token);
 
       if (response.status === 201) {
-        console.log("Quiz created successfully!");
-        navigate(`/share_quiz/${quizId}`);
-      }
+        toast.success("Quiz created successfully!");
 
+        navigate(`/share_quiz/${userId}/${quizId}`);
+      }
     } else {
       // Show individual validation messages
       if (newValidationMessages.question) {
-        console.log(newValidationMessages.question); // Replace with toast notification
+        toast.error(newValidationMessages.question);
       }
       if (newValidationMessages.input) {
-        console.log(newValidationMessages.input); // Replace with toast notification
+        toast.error(newValidationMessages.input);
       }
       if (newValidationMessages.answer) {
-        console.log(newValidationMessages.answer); // Replace with toast notification
+        toast.error(newValidationMessages.answer);
       }
     }
   };
@@ -162,223 +167,300 @@ const CreateQnA = ({ quizId }) => {
   const selectedItem = items[selectedItemIndex];
 
   return (
-    <div>
-      <div className="items-container">
-        <div className="items-list">
-          {items.map((item, index) => (
-            <div key={index}>
-            <button
-              
-              onClick={() => handleItemClick(index)}
-              className={`item-button ${
-                index === selectedItemIndex ? "selected" : ""
-              }`}
-            >
-              {item.name}
-            </button>
-            <button onClick={()=>deleteItem(index)}>X</button>
-            </div>
-          ))}
-        </div>
-        {items.length < 5 && (
-          <button onClick={addNewItem} className="add-item-button">
-            Add New Item
-          </button>
-        )
-        }
-       
-      </div>
-
-      {selectedItem && (
+    <>
+      <div
+        style={{
+          background: "white",
+          padding: "50px",
+          height: "500px",
+          width: "600px",
+          borderRadius: "10px",
+          position: "relative",
+        }}
+      >
         <div>
-          <h3>Editing {selectedItem.name}</h3>
-
-          <div>
-            <label>
-              Question:
-              <input
-                type="text"
-                value={selectedItem.question}
-                onChange={(e) =>
-                  handleQuestionChange(selectedItemIndex, e.target.value)
-                }
-                placeholder="Enter the question"
-              />
-            </label>
-          </div>
-
-          <div>
-            <label>
-              <input
-                type="radio"
-                name="inputType"
-                checked={selectedItem.type === "text"}
-                onChange={() => handleTypeChange("text")}
-              />
-              Text
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="inputType"
-                checked={selectedItem.type === "imageUrl"}
-                onChange={() => handleTypeChange("imageUrl")}
-              />
-              Image URL
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="inputType"
-                checked={selectedItem.type === "both"}
-                onChange={() => handleTypeChange("both")}
-              />
-              Both
-            </label>
-          </div>
-
-          {selectedItem.inputs.map((input, inputIndex) => (
-            <div key={inputIndex}>
-              {selectedItem.type === "text" && (
-                <input
-                  type="text"
-                  value={input.text}
-                  onChange={(e) =>
-                    handleInputChange(
-                      selectedItemIndex,
-                      inputIndex,
-                      "text",
-                      e.target.value
-                    )
-                  }
-                  placeholder={`Input ${inputIndex + 1}`}
-                />
-              )}
-
-              {selectedItem.type === "imageUrl" && (
-                <input
-                  type="text"
-                  value={input.imageUrl}
-                  onChange={(e) =>
-                    handleInputChange(
-                      selectedItemIndex,
-                      inputIndex,
-                      "imageUrl",
-                      e.target.value
-                    )
-                  }
-                  placeholder={`Image URL ${inputIndex + 1}`}
-                />
-              )}
-
-              {selectedItem.type === "both" && (
-                <div>
-                  <input
-                    type="text"
-                    value={input.text}
-                    onChange={(e) =>
-                      handleInputChange(
-                        selectedItemIndex,
-                        inputIndex,
-                        "text",
-                        e.target.value
-                      )
-                    }
-                    placeholder={`Text ${inputIndex + 1}`}
-                  />
-                  <input
-                    type="text"
-                    value={input.imageUrl}
-                    onChange={(e) =>
-                      handleInputChange(
-                        selectedItemIndex,
-                        inputIndex,
-                        "imageUrl",
-                        e.target.value
-                      )
-                    }
-                    placeholder={`Image URL ${inputIndex + 1}`}
-                  />
-                </div>
-              )}
-
-              <label>
-                <input
-                  type="radio"
-                  name={`answer-${selectedItemIndex}`}
-                  checked={selectedItem.answerIndex === inputIndex}
-                  onChange={() =>
-                    handleAnswerSelect(selectedItemIndex, inputIndex)
-                  }
-                />
-                Set as Answer
-              </label>
-
-              {inputIndex >= 2 && (
-                <button
-                  onClick={() =>
-                    removeInputField(selectedItemIndex, inputIndex)
-                  }
-                >
-                  Remove
+          <div className="items-container">
+            <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+              <div className="items-list">
+                {items.map((item, index) => (
+                  <div className="item" key={index}>
+                    <button
+                      onClick={() => handleItemClick(index)}
+                      className={`item-button ${
+                        index === selectedItemIndex ? "selected" : ""
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                    <button
+                      className="button-x"
+                      onClick={() => deleteItem(index)}
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {items.length < 5 && (
+                <button onClick={addNewItem} className="add-item-button">
+                  +
                 </button>
               )}
             </div>
-          ))}
-
-          {selectedItem.inputs.length < 4 && (
-            <button onClick={() => addInputField(selectedItemIndex)}>
-              Add Input Field
-            </button>
-          )}
-
-          {/* Timer Options */}
-          <div>
-            <h4>Set Timer</h4>
-            <div className="timer-options">
-              <button
-                className={`timer-button ${
-                  selectedItem.timer === "off" ? "selected" : ""
-                }`}
-                onClick={() => handleTimerChange(selectedItemIndex, "off")}
-              >
-                Off
-              </button>
-              <button
-                className={`timer-button ${
-                  selectedItem.timer === "5" ? "selected" : ""
-                }`}
-                onClick={() => handleTimerChange(selectedItemIndex, "5")}
-              >
-                5 seconds
-              </button>
-              <button
-                className={`timer-button ${
-                  selectedItem.timer === "10" ? "selected" : ""
-                }`}
-                onClick={() => handleTimerChange(selectedItemIndex, "10")}
-              >
-                10 seconds
-              </button>
+            <div style={{ color: "#9f9f9f", fontSize: "1rem" }}>
+              Max 5 questions
             </div>
           </div>
+
+          {selectedItem && (
+            <div>
+              <div>
+                <input
+                  type="text"
+                  value={selectedItem.question}
+                  onChange={(e) =>
+                    handleQuestionChange(selectedItemIndex, e.target.value)
+                  }
+                  placeholder="Q & A question"
+                  className="question-input"
+                />
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  color: "#9F9F9F",
+                  marginTop: "10px",
+                }}
+              >
+                <h3 style={{ color: "#9F9F9F", fontSize: "1.5rem" }}>
+                  Option type
+                </h3>
+                <label>
+                  <input
+                    type="radio"
+                    name="inputType"
+                    checked={selectedItem.type === "text"}
+                    onChange={() => handleTypeChange("text")}
+                  />
+                  Text
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="inputType"
+                    checked={selectedItem.type === "imageUrl"}
+                    onChange={() => handleTypeChange("imageUrl")}
+                  />
+                  Image URL
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="inputType"
+                    checked={selectedItem.type === "both"}
+                    onChange={() => handleTypeChange("both")}
+                  />
+                  Text & Image URL
+                </label>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                {selectedItem.inputs.map((input, inputIndex) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                    }}
+                    key={inputIndex}
+                  >
+                    <label>
+                      <input
+                        type="radio"
+                        name={`answer-${selectedItemIndex}`}
+                        checked={selectedItem.answerIndex === inputIndex}
+                        onChange={() =>
+                          handleAnswerSelect(selectedItemIndex, inputIndex)
+                        }
+                      />
+                    </label>
+                    {selectedItem.type === "text" && (
+                      <input
+                        type="text"
+                        value={input.text}
+                        onChange={(e) =>
+                          handleInputChange(
+                            selectedItemIndex,
+                            inputIndex,
+                            "text",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Text"
+                        className={`option-input ${
+                          selectedItem.answerIndex === inputIndex
+                            ? "correct"
+                            : ""
+                        } `}
+                      />
+                    )}
+
+                    {selectedItem.type === "imageUrl" && (
+                      <input
+                        type="text"
+                        value={input.imageUrl}
+                        onChange={(e) =>
+                          handleInputChange(
+                            selectedItemIndex,
+                            inputIndex,
+                            "imageUrl",
+                            e.target.value
+                          )
+                        }
+                        placeholder="Image URL"
+                        className={`option-input ${
+                          selectedItem.answerIndex === inputIndex
+                            ? "correct"
+                            : ""
+                        } `}
+                      />
+                    )}
+
+                    {selectedItem.type === "both" && (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-around",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          value={input.text}
+                          onChange={(e) =>
+                            handleInputChange(
+                              selectedItemIndex,
+                              inputIndex,
+                              "text",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Text"
+                          className={`option-input ${
+                            selectedItem.answerIndex === inputIndex
+                              ? "correct"
+                              : ""
+                          } `}
+                        />
+                        <input
+                          type="text"
+                          value={input.imageUrl}
+                          onChange={(e) =>
+                            handleInputChange(
+                              selectedItemIndex,
+                              inputIndex,
+                              "imageUrl",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Image URL"
+                          className={`option-input ${
+                            selectedItem.answerIndex === inputIndex
+                              ? "correct"
+                              : ""
+                          } `}
+                        />
+                      </div>
+                    )}
+
+                    {inputIndex >= 2 && (
+                      <button
+                        onClick={() =>
+                          removeInputField(selectedItemIndex, inputIndex)
+                        }
+                        style={{
+                          outline: "none",
+                          border: "none",
+                          background: "none",
+                          color: "#D60000",
+                          fontSize: "1rem",
+                        }}
+                      >
+                        <RiDeleteBin6Fill />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                {selectedItem.inputs.length < 4 && (
+                  <div>
+                    <button
+                      className="add-option-button"
+                      onClick={() => addInputField(selectedItemIndex)}
+                    >
+                      Add option
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Timer Options */}
+              <div className="timer" >
+                <h4>Timer</h4>
+                <div className={"timer-options"}>
+                  <button
+                    className={`timer-button ${
+                      selectedItem.timer === "off" ? "selected" : ""
+                    }`}
+                    onClick={() => handleTimerChange(selectedItemIndex, "off")}
+                  >
+                    Off
+                  </button>
+                  <button
+                    className={`timer-button ${
+                      selectedItem.timer === "5" ? "selected" : ""
+                    }`}
+                    onClick={() => handleTimerChange(selectedItemIndex, "5")}
+                  >
+                    5 seconds
+                  </button>
+                  <button
+                    className={`timer-button ${
+                      selectedItem.timer === "10" ? "selected" : ""
+                    }`}
+                    onClick={() => handleTimerChange(selectedItemIndex, "10")}
+                  >
+                    10 seconds
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
 
-      {/* Validation messages */}
-      {validationMessages.question && (
-        <p style={{ color: "red" }}>{validationMessages.question}</p>
-      )}
-      {validationMessages.input && (
-        <p style={{ color: "red" }}>{validationMessages.input}</p>
-      )}
-      {validationMessages.answer && (
-        <p style={{ color: "red" }}>{validationMessages.answer}</p>
-      )}
-
-      {/* Button to log all items */}
-      <button onClick={createQuiz}>Create Quiz</button>
-    </div>
+        <div className="lower-button">
+          <button
+            className="button"
+            onClick={() => navigate(`/dashboard/${userId}`)}
+          >
+            Cancel
+          </button>
+          <button
+            className="button"
+            style={{ color: "white", background: "#60B84B" }}
+            onClick={createQuiz}
+          >
+            Create Quiz
+          </button>
+        </div>
+      </div>
+    </>
   );
 };
 

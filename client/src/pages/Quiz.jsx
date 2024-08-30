@@ -201,6 +201,7 @@ function Quiz() {
                     {selectedItem.type === "text" && (
                       <div
                         style={{
+                          borderRadius:"10px",
                           border: `${
                             clickedIndex == index ? "2px solid blue" : "none"
                           }`,
@@ -221,6 +222,7 @@ function Quiz() {
                     {selectedItem.type === "imageUrl" && (
                       <div
                         style={{
+                          borderRadius:"10px",
                           border: `${
                             clickedIndex == index ? "2px solid blue" : "none"
                           }`,
@@ -243,6 +245,7 @@ function Quiz() {
                     {selectedItem.type === "both" && (
                       <div
                         style={{
+                          borderRadius:"10px",
                           border: `${
                             clickedIndex == index ? "2px solid blue" : "none"
                           }`,

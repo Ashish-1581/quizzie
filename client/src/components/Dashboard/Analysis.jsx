@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {get_Quizzes,delete_Quiz  } from '../../api/quizApi'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import QnaResponse from '../Analysis/QnaResponse';
 import PollResponse from '../Analysis/PollResponse';
@@ -15,6 +15,7 @@ function Analysis() {
 
   const token=localStorage.getItem('token');
   const navigate = useNavigate();
+  const {userId}=useParams();
 
   useEffect(() => {
     fetchQuizzes();
@@ -46,10 +47,10 @@ function Analysis() {
 
   const handelEdit=(quizId,type)=>{
     if(type==='poll'){
-      navigate(`/edit_poll/${quizId}`);
+      navigate(`/edit_poll/${userId}/${quizId}`);
     }
     else{
-      navigate(`/edit_qna/${quizId}`);
+      navigate(`/edit_qna/${userId}/${quizId}`);
     }
    
   }

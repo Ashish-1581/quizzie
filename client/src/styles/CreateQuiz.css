@@ -1,0 +1,54 @@
+.radio-button-group {
+    display: flex;
+    gap: 10px; /* Add some space between the buttons */
+}
+
+.radio-button {
+    display: inline-block;
+    position: relative;
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: white; /* Default background color */
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    font-size: 1.2rem;
+}
+
+.radio-button input {
+    display: none; 
+}
+
+.radio-button.active {
+    background-color: #60B84B; /* Active button background color */
+    border-color: #60B84B; /* Active button border color */
+    color: white; /* Text color for active button */
+}
+
+.button{
+    display: inline-block;
+    position: relative;
+    padding: 10px 20px;
+    margin: 5px;
+    width: 200px;
+    background-color: white; /* Default background color */
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    font-size: 1.2rem;
+    border: none;
+    margin-top: 50px;
+}
+.button.active{
+    background-color: #60B84B; /* Active button background color */
+    border-color: #60B84B; /* Active button border color */
+    color: white; /* Text color for active button */
+}
+
+.button:hover, .radio-button:hover {
+    background-color: #60B84B; /* Active button background color */
+    border-color: #60B84B; /* Active button border color */
+    color: white;
+}
