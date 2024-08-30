@@ -45,7 +45,7 @@ function QnaResponse({ quizId }) {
     ariaLabel="loading"
     wrapperStyle
     wrapperClass
-  />;
+  />
   </div>
   }
 

@@ -45,7 +45,7 @@ function PollResponse({ quizId }) {
     ariaLabel="loading"
     wrapperStyle
     wrapperClass
-  />;
+  />
   </div>
   }
 

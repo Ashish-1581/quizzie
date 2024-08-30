@@ -112,7 +112,7 @@ function EditPoll() {
     ariaLabel="loading"
     wrapperStyle
     wrapperClass
-  />;
+  />
   </div>
   }
   const selectedItem = items[selectedItemIndex];

@@ -121,7 +121,7 @@ function EditQna() {
     ariaLabel="loading"
     wrapperStyle
     wrapperClass
-  />;
+  />
   </div>
   }
 
