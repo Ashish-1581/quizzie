@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import {get_Quizzes} from '../../api/quizApi';
 import { FaEye } from "react-icons/fa";
 
+
 function Display() {
     const token=localStorage.getItem("token");
     const [quizzes, setQuizzes] = useState([]);
@@ -10,7 +11,15 @@ function Display() {
         const response = await get_Quizzes(token);
        
         if (response.data) {
-            setQuizzes(response.data);
+          
+            response.data.map((quiz)=>{
+                if(quiz.impression>=10){
+                    setQuizzes((prev)=>{return [...prev,quiz]})
+                
+            }})
+         
+
+           
         }
     }
     useEffect(() => {
@@ -22,6 +31,8 @@ function Display() {
   
     <div>
     <h2 style={{marginTop:"50px",fontSize:"2rem"}}>Trending Quizs</h2>
+
+    {quizzes.length>0?(
     <div style={{display:"flex",flexWrap:"wrap",gap:"50px",marginTop:"30px"}} >
     {quizzes.map((quiz) => (
         <div style={{ display: "flex",
@@ -44,7 +55,7 @@ function Display() {
             <p style={{color:"#60B84B",fontWeight:"bolder",fontSize:"0.8rem"}}>Created on:{quiz.createdAt}</p>
         </div>
     ))}
-    </div>
+    </div>):<h1 style={{textAlign:"center",marginTop:"150px",color:"#9F9F9F",fontSize:"5rem"}}>No Trending Quizs</h1>}
 
     </div>
 

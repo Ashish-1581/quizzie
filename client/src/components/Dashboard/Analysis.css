@@ -1,0 +1,78 @@
+.quiz-table {
+    width: 100%;
+    border-collapse: separate; /* Allow space between borders for rounded corners */
+    border-spacing: 0; /* Ensure no extra spacing between cells */
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: center;
+    font-weight: bolder;
+  }
+  
+  .quiz-table th {
+    background-color: #5076FF;
+    color: white;
+    padding: 10px;
+    border: none; /* No border for header cells */
+  
+  }
+
+    .quiz-table th:first-child {
+        border-top-left-radius: 8px; 
+        border-bottom-left-radius: 8px;
+    }
+
+    .quiz-table th:last-child {
+        border-top-right-radius: 8px; 
+        border-bottom-right-radius: 8px;
+    }
+  
+  .quiz-table td {
+    padding: 10px;
+    border: none; /* No border for table cells */
+  }
+
+  
+  .even-row td:first-child {
+    border-bottom-left-radius: 8px; 
+    border-top-left-radius: 8px;
+  }
+  
+  .even-row td:last-child {
+    border-bottom-right-radius: 8px; 
+    border-top-right-radius: 8px;
+  }
+  
+  .odd-row td:first-child {
+    border-bottom-left-radius: 8px; 
+    border-top-left-radius: 8px;
+  }
+  
+  .odd-row td:last-child {
+    border-bottom-right-radius: 8px; 
+    border-top-right-radius: 8px; 
+
+  }
+  
+  .even-row {
+    background-color: #e9e9e9; /* Light grey for even rows */
+  }
+  
+  .odd-row {
+    background-color:  #B3C4FF; /* Slightly darker grey for odd rows */
+  }
+  
+  .quiz-table button {
+    margin-right: 8px;
+    background: none;
+    font-size: 1.2rem;
+    
+    border: none; 
+
+
+    cursor: pointer;
+
+  }
+  
+
+
+
