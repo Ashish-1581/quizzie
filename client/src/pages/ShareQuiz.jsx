@@ -7,7 +7,8 @@ import { toast } from "react-toastify";
 
 function ShareQuiz() {
   const { quizId } = useParams();
-  const { userId } = useParams();
+  const userId=localStorage.getItem("user");
+  
   const navigate = useNavigate();
 
   let path = `${window.location.origin}/quiz/${quizId}`;

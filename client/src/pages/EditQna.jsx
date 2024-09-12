@@ -10,7 +10,7 @@ function EditQna() {
   const { quizId } = useParams();
   const [items, setItems] = useState(null);
   const navigate = useNavigate();
-  const {userId}=useParams();
+  const userId=localStorage.getItem("user");
 
   useEffect(() => {
     fetchQuiz();

@@ -64,6 +64,7 @@ function Dashboard() {
   }, [quizzes]);
 
   const handelLogout = () => {
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
     navigate("/");
   };

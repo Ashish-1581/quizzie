@@ -9,7 +9,8 @@ import { Audio } from 'react-loader-spinner'
 
 function EditPoll() {
   const { quizId } = useParams();
- const { userId } = useParams();
+
+ const userId=localStorage.getItem("user");
   const [items, setItems] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {

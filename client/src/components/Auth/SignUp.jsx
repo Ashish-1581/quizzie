@@ -48,7 +48,7 @@ function SignUp() {
         const loginResponse = await login({ email, password });
 
         if (loginResponse.status === 200) {
-          localStorage.setItem("user", loginResponse.data.user.username);
+          localStorage.setItem("user", loginResponse.data.user._id);
           localStorage.setItem("token", loginResponse.data.token);
           toast.success("Logged In successfully!");
           navigate(`/dashboard/${response.data.user._id}`);

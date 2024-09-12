@@ -15,23 +15,24 @@ function Analysis() {
   const [isPoll, setIsPoll] = useState(false);
   const [isQna, setIsQna] = useState(false);
   const [quizId, setQuizId] = useState("");
+  const [modalQuizId, setModalQuizId] = useState(null); // Track which quiz's modal is open
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const { userId } = useParams();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const OpenModel = () => {
-    setIsModalOpen(true);
+  const OpenModel = (quizId) => {
+    setModalQuizId(quizId); // Open modal for specific quiz
   };
 
   const CloseModel = () => {
-    setIsModalOpen(false);
+    setModalQuizId(null); // Close modal
   };
 
   useEffect(() => {
     fetchQuizzes();
   }, []);
+
   const fetchQuizzes = async () => {
     const response = await get_Quizzes(token);
     if (response.data) {
@@ -40,12 +41,13 @@ function Analysis() {
   };
 
   const handelDelete = async (quizId) => {
-    const response = await delete_Quiz(quizId);
+    const response = await delete_Quiz(quizId); // Delete specific quiz
     if (response.status === 200) {
       fetchQuizzes();
       CloseModel();
     }
   };
+
   const handelShare = (quizId) => {
     let path = `${window.location.origin}/quiz/${quizId}`;
     navigator.clipboard
@@ -78,7 +80,11 @@ function Analysis() {
 
   return (
     <>
-      {!quizzes.length && !isPoll && !isQna && <div style={{textAlign:"center"}}><h1>No quizzes found</h1></div>}
+      {!quizzes.length && !isPoll && !isQna && (
+        <div style={{ textAlign: "center" }}>
+          <h1>No quizzes found</h1>
+        </div>
+      )}
 
       {quizzes.length > 0 && !isPoll && !isQna && (
         <div>
@@ -110,14 +116,12 @@ function Analysis() {
                     >
                       <FaRegEdit style={{ color: "#854CFF" }} />
                     </button>
-                    <button className="action" onClick={OpenModel}>
-                      <RiDeleteBin6Fill style={{ color: "#D60000" }}/>
+                    <button
+                      className="action"
+                      onClick={() => OpenModel(quiz._id)} // Open modal for this quiz
+                    >
+                      <RiDeleteBin6Fill style={{ color: "#D60000" }} />
                     </button>
-                    <DeleteQuizModel
-                      isOpen={isModalOpen}
-                      onClose={CloseModel}
-                      onDelete={() => handelDelete(quiz._id)}
-                    />
                     <button
                       className="action"
                       onClick={() => handelShare(quiz._id)}
@@ -133,6 +137,15 @@ function Analysis() {
                       Question Wise Analysis
                     </Link>
                   </td>
+
+                  {/* Render Delete Modal only for the specific quiz when modalQuizId matches */}
+                  {modalQuizId === quiz._id && (
+                    <DeleteQuizModel
+                      isOpen={modalQuizId === quiz._id}
+                      onClose={CloseModel}
+                      onDelete={() => handelDelete(quiz._id)} // Pass the correct quizId to delete
+                    />
+                  )}
                 </tr>
               ))}
             </tbody>

@@ -30,7 +30,7 @@ function Login() {
     try {
       const response = await login({ email, password });
       if (response.status === 200) {
-        localStorage.setItem("user", response.data.user.username);
+        localStorage.setItem("user", response.data.user._id);
         localStorage.setItem("token", response.data.token);
         toast.success("Logged In successfully!");
 
