@@ -351,6 +351,7 @@ const CreatePoll = ({ quizId }) => {
                       background: "none",
                       color: "#D60000",
                       fontSize: "1rem",
+                      cursor: "pointer",
                     }}
                   >
                   <RiDeleteBin6Fill />

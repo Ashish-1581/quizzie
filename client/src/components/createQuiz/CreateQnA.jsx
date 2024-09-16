@@ -10,12 +10,12 @@ import { RiDeleteBin6Fill } from "react-icons/ri";
 const CreateQnA = ({ quizId }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const userId = useParams().userId;
+  const userId = localStorage.getItem("userId");
 
   const [items, setItems] = useState([
     {
       name: "Item 1",
-      question: "", // New property for question
+      question: "", 
       type: "text",
       inputs: [
         { text: "", imageUrl: "" },
@@ -391,6 +391,7 @@ const CreateQnA = ({ quizId }) => {
                           background: "none",
                           color: "#D60000",
                           fontSize: "1rem",
+                          cursor: "pointer",
                         }}
                       >
                         <RiDeleteBin6Fill />
