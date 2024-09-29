@@ -55,7 +55,7 @@ function Display() {
             <p style={{color:"#60B84B",fontWeight:"bolder",fontSize:"0.8rem"}}>Created on:{quiz.createdAt}</p>
         </div>
     ))}
-    </div>):<h1 style={{textAlign:"center",marginTop:"150px",color:"#9F9F9F",fontSize:"5rem"}}>No Trending Quizs</h1>}
+    </div>):<h1 style={{textAlign:"center",marginTop:"150px",color:"#9F9F9F",fontSize:"5rem"}}>No Trending Quizzes</h1>}
 
     </div>
 
