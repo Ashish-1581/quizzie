@@ -30,12 +30,10 @@ function Quiz() {
         const currentViews = await get_QuizById(quizId);
         console.log(currentViews);
 
-        if(currentViews.data._id == quizId){ {
-
-        const newViews = currentViews.data.impression + 1;
-
-        const response = await update_Quiz({ quizId, impression: newViews });
-        }}
+        if (currentViews.data._id === quizId) {
+          const newViews = currentViews.data.impression + 1;
+          const response = await update_Quiz({ quizId, impression: newViews });
+        }
       } catch (error) {
         console.error("Error updating views:", error);
       }
@@ -98,9 +96,7 @@ function Quiz() {
 
       if (selectedItemIndex === items.length - 1) {
         handelSubmit();
-
         setTimeLeft(null);
-
         return;
       }
     }
@@ -109,8 +105,10 @@ function Quiz() {
   const handelNext = () => {
     if (selectedItemIndex < items.length - 1) {
       setSelectedItemIndex((prevIndex) => prevIndex + 1);
+      serClickedIndex(null); // Reset clickedIndex when moving to the next question
     }
   };
+
   const handelClick = (index) => {
     serClickedIndex(index);
     if (quiz.type === "poll") {
@@ -147,6 +145,7 @@ function Quiz() {
       }
 
       setPollSubmit(true);
+      serClickedIndex(null); // Reset clickedIndex after submitting
     } else if (quiz.type === "qna") {
       if (qnaData.length !== 0) {
         const res = await create_Response(quizId, qnaData);
@@ -156,6 +155,7 @@ function Quiz() {
         }
       }
       setQnaSubmit(true);
+      serClickedIndex(null); // Reset clickedIndex after submitting
     }
   };
 
@@ -192,8 +192,8 @@ function Quiz() {
                   <h2 style={{ color: "red" }}>00:{timeLeft}s</h2>
                 )}
               </div>
-              <div >
-              <h1 >{selectedItem.question}</h1>
+              <div>
+                <h1>{selectedItem.question}</h1>
               </div>
               <div className={styles.options}>
                 {selectedItem.inputs.map((input, index) => (
@@ -201,14 +201,14 @@ function Quiz() {
                     {selectedItem.type === "text" && (
                       <div
                         style={{
-                          borderRadius:"10px",
+                          borderRadius: "10px",
                           border: `${
-                            clickedIndex == index ? "2px solid blue" : "none"
+                            clickedIndex === index ? "2px solid blue" : "none"
                           }`,
                           fontWeight: "bold",
                           fontSize: "20px",
-                          height:"100%",
-                          width:"100%",
+                          height: "100%",
+                          width: "100%",
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
@@ -222,15 +222,15 @@ function Quiz() {
                     {selectedItem.type === "imageUrl" && (
                       <div
                         style={{
-                          borderRadius:"10px",
+                          borderRadius: "10px",
                           border: `${
-                            clickedIndex == index ? "2px solid blue" : "none"
+                            clickedIndex === index ? "2px solid blue" : "none"
                           }`,
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          height:"100%",
-                          width:"100%"
+                          height: "100%",
+                          width: "100%",
                         }}
                         onClick={() => handelClick(index)}
                       >
@@ -245,22 +245,21 @@ function Quiz() {
                     {selectedItem.type === "both" && (
                       <div
                         style={{
-                          borderRadius:"10px",
+                          borderRadius: "10px",
                           border: `${
-                            clickedIndex == index ? "2px solid blue" : "none"
+                            clickedIndex === index ? "2px solid blue" : "none"
                           }`,
                           display: "flex",
-                      
                           justifyContent: "space-between",
                           alignItems: "center",
-                          width:"100%",
-                          height:"100%",
-                          padding:"10px",
-                          textAlign:"center"
+                          width: "100%",
+                          height: "100%",
+                          padding: "10px",
+                          textAlign: "center",
                         }}
                         onClick={() => handelClick(index)}
                       >
-                        <p style={{width:"40%"}}>{input.text}</p>
+                        <p style={{ width: "40%" }}>{input.text}</p>
                         <img
                           src={input.imageUrl}
                           alt={`Input ${index + 1}`}
@@ -273,14 +272,11 @@ function Quiz() {
               </div>
 
               {selectedItemIndex < items.length - 1 ? (
-                <button className={styles.button} onClick={() => handelNext()}>
+                <button className={styles.button} onClick={handelNext}>
                   Next
                 </button>
               ) : (
-                <button
-                  className={styles.button}
-                  onClick={() => handelSubmit()}
-                >
+                <button className={styles.button} onClick={handelSubmit}>
                   Submit
                 </button>
               )}
